@@ -224,10 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="modal-body">
                     <img src="${src}" alt="${alt}">
+                    </div>
                 </div>
-            </div>
-        `;
-        
+            `;
+            
         document.body.appendChild(fullscreenModal);
         document.body.style.overflow = 'hidden';
         
@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSlide = 0;
     const slides = document.querySelectorAll('.testimonial-slide');
     const dots = document.querySelectorAll('.dot');
-
+    
     function showSlide(n) {
         // Проверяем, существуют ли слайды
         if (!slides || slides.length === 0) return;
@@ -436,11 +436,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Показываем текущий слайд, если он существует
         if (slides[n]) {
-            slides[n].style.display = 'block';
+        slides[n].style.display = 'block';
             
             // Добавляем активный класс для текущей точки
             if (dots && dots.length > 0 && dots[n]) {
-                dots[n].classList.add('active');
+        dots[n].classList.add('active');
             }
         }
     }
@@ -452,20 +452,20 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSlide = (currentSlide + 1) % slides.length;
         showSlide(currentSlide);
     }
-
+    
     // Инициализируем слайдер только если есть слайды
     if (slides && slides.length > 0) {
         try {
-            showSlide(currentSlide);
-            setInterval(nextSlide, 5000);
-            
+        showSlide(currentSlide);
+        setInterval(nextSlide, 5000);
+        
             // Инициализируем точки только если они существуют
             if (dots && dots.length > 0) {
                 for (let i = 0; i < dots.length; i++) {
                     if (dots[i]) {
                         dots[i].addEventListener('click', () => {
                             currentSlide = i;
-                            showSlide(currentSlide);
+                showSlide(currentSlide);
                         });
                     }
                 }
