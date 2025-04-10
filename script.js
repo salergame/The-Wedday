@@ -1,3 +1,11 @@
+/**
+ * Aira's Magic World - Агентство по организации мероприятий
+ * JavaScript функциональность сайта
+ * Версия: 2.0 (2025)
+ * Автор: Sanjar
+ */
+
+// Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', () => {
     const nav = document.querySelector('.nav');
     const menuBtn = document.querySelector('.burger-menu');
@@ -704,4 +712,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     handleElementsAnimation();
     contactForm.init();
+
+    // Фильтрация портфолио
+    function initPortfolioFilter() {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+        
+        // Функция для фильтрации элементов
+        function filterPortfolio(category) {
+            portfolioItems.forEach(item => {
+                const itemCategory = item.dataset.category;
+                if (category === 'all' || itemCategory === category) {
+                    item.classList.remove('hide');
+                } else {
+                    item.classList.add('hide');
+                }
+            });
+        }
+        
+        // Обработчик клика на кнопки фильтра
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Удаляем класс active у всех кнопок
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Добавляем класс active текущей кнопке
+                this.classList.add('active');
+                
+                // Фильтруем элементы по выбранной категории
+                const category = this.dataset.filter;
+                filterPortfolio(category);
+            });
+        });
+    }
+
+    // Инициализация фильтрации портфолио
+    initPortfolioFilter();
 }); 

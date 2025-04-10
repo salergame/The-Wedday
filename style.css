@@ -273,9 +273,8 @@ img {
 }
 
 .section {
-    padding: 120px 0;
+    padding: 50px 0; /* Уменьшаем отступы между секциями */
     position: relative;
-    overflow: hidden;
 }
 
 .section-title {
@@ -865,85 +864,109 @@ img {
 /* Услуги */
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 30px;
     margin-top: 50px;
 }
 
 .service-card {
-    background: var(--white);
-    border-radius: 8px;
-    padding: 30px 25px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    background-color: var(--white);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: var(--shadow);
     text-align: center;
+    transition: var(--transition);
+    cursor: default;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
     height: 100%;
-    cursor: default;
 }
 
 .service-card:hover {
-    transform: none;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
 }
 
-.service-image {
-    width: 100%;
-    height: 200px;
+.service-icon {
     margin-bottom: 20px;
-    overflow: hidden;
-    border-radius: 10px;
-    position: relative;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
 }
 
-.service-image img {
+.service-icon i,
+.service-svg,
+.microphone-svg,
+.cherry-blossom-svg {
+    font-size: 3rem;
+    color: #d4af37; /* Золотистый цвет */
+    transition: var(--transition);
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: none;
 }
 
-.service-card:hover .service-image img {
-    transform: none;
+.service-svg,
+.microphone-svg,
+.cherry-blossom-svg {
+    filter: invert(74%) sepia(45%) saturate(792%) hue-rotate(359deg) brightness(89%) contrast(91%);
+}
+
+.service-card:hover .service-icon i,
+.service-card:hover .service-svg,
+.service-card:hover .microphone-svg,
+.service-card:hover .cherry-blossom-svg {
+    transform: scale(1.1);
 }
 
 .service-card h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
     margin-bottom: 15px;
-    color: #333;
-    position: relative;
-    z-index: 1;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    font-family: var(--font-secondary);
 }
 
 .service-card p {
-    color: #666;
+    color: var(--light-text);
     font-size: 1rem;
     line-height: 1.6;
     position: relative;
     z-index: 1;
-    margin-top: auto;
 }
 
-.service-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
+/* SVG иконки */
+.service-svg,
+.microphone-svg,
+.cherry-blossom-svg {
     width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, #d4af37, transparent);
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 0.5s ease;
+    height: 100%;
+    transition: var(--transition);
+    filter: brightness(0) saturate(100%) invert(58%) sepia(75%) saturate(452%) hue-rotate(7deg) brightness(92%) contrast(84%);
 }
 
-.service-card:hover::after {
-    transform: scaleX(1);
-    transform-origin: left;
+.service-card:hover .service-svg,
+.service-card:hover .microphone-svg,
+.service-card:hover .cherry-blossom-svg {
+    transform: scale(1.1);
+    filter: brightness(0) saturate(100%) invert(58%) sepia(75%) saturate(452%) hue-rotate(7deg) brightness(92%) contrast(84%);
+}
+
+/* Изменение цвета SVG */
+.custom-svg-icon img {
+    width: 60px;
+    height: 60px;
+    filter: invert(58%) sepia(75%) saturate(452%) hue-rotate(7deg) brightness(92%) contrast(84%);
+    transition: var(--transition);
+}
+
+.service-card:hover .custom-svg-icon img {
+    transform: scale(1.1);
+    filter: invert(49%) sepia(77%) saturate(477%) hue-rotate(6deg) brightness(83%) contrast(86%);
 }
 
 /* Стилизация иконки концертного микрофона */
@@ -961,92 +984,94 @@ img {
 /* Портфолио */
 .portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
-    margin-top: 50px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
 }
 
 .portfolio-item {
     position: relative;
-    border-radius: 15px;
+    border-radius: 10px;
     overflow: hidden;
-    aspect-ratio: 1;
-    cursor: pointer !important;
-    transition: var(--transition);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transform: translateY(0);
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    touch-action: manipulation;
-}
-
-.portfolio-item:hover,
-.portfolio-item:active {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-}
-
-.portfolio-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    z-index: 1;
-    transition: var(--transition);
-}
-
-.portfolio-item:hover::before,
-.portfolio-item:active::before {
-    opacity: 1;
+    box-shadow: var(--shadow);
+    cursor: pointer;
 }
 
 .portfolio-item img {
     width: 100%;
-    height: 100%;
+    height: 300px;
     object-fit: cover;
     transition: var(--transition);
 }
 
-.portfolio-overlay {
+.portfolio-item-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
-    right: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-    padding: 30px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
     color: var(--white);
-    transform: translateY(100%);
+    padding: 15px;
+    transform: translateY(0); /* Показываем текст сразу */
     transition: var(--transition);
-    z-index: 2;
 }
 
-.portfolio-item:hover .portfolio-overlay,
-.portfolio-item:active .portfolio-overlay {
-    transform: translateY(0);
+.portfolio-item:hover img {
+    transform: scale(1.05);
 }
 
-.portfolio-item:hover img,
-.portfolio-item:active img {
-    transform: scale(1.1);
+.portfolio-item-overlay h4 {
+    margin-bottom: 5px;
+    font-size: 1.2rem;
+    font-weight: 600;
 }
 
-@media (max-width: 992px) {
-    .portfolio-item {
-        aspect-ratio: 3/2;
+.portfolio-item-overlay p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Адаптация под мобильные устройства */
+@media (max-width: 768px) {
+    section {
+        padding: 30px 0;
     }
     
-    .portfolio-overlay {
-        transform: translateY(0);
-        opacity: 0.9;
+    .header-content h1 {
+        font-size: 2.5rem;
     }
     
-    .portfolio-overlay h3,
-    .portfolio-overlay p {
-        opacity: 1;
-        transform: translateY(0);
+    .services-grid, 
+    .portfolio-grid,
+    .team-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .contact-info, 
+    .contact-form {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .header-content h1 {
+        font-size: 2rem;
+    }
+    
+    .services-grid, 
+    .portfolio-grid,
+    .team-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .footer-content .social-links {
+        margin-top: 20px;
     }
 }
 
@@ -2837,7 +2862,11 @@ img {
 
 /* Стили для SVG иконки микрофона */
 .custom-svg-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
     display: flex;
+    align-items: center;
     justify-content: center;
     margin-bottom: 20px;
 }
@@ -3293,4 +3322,74 @@ img {
     position: relative;
     z-index: 1;
     margin-top: auto;
+}
+
+/* SVG иконки */
+.custom-svg-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-svg {
+    width: 100%;
+    height: 100%;
+    transition: var(--transition);
+}
+
+.service-card:hover .service-svg {
+    transform: scale(1.1);
+}
+
+.service-icon i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    transition: var(--transition);
+}
+
+.service-card:hover .service-icon i {
+    transform: scale(1.1);
+    color: var(--primary-dark);
+}
+
+/* Изменение цвета SVG */
+.custom-svg-icon img {
+    width: 60px;
+    height: 60px;
+    filter: invert(58%) sepia(75%) saturate(452%) hue-rotate(7deg) brightness(92%) contrast(84%);
+    transition: var(--transition);
+}
+
+.service-card:hover .custom-svg-icon img {
+    transform: scale(1.1);
+    filter: invert(49%) sepia(77%) saturate(477%) hue-rotate(6deg) brightness(83%) contrast(86%);
+}
+
+/* Микрофон SVG */
+.microphone-svg {
+    width: 100%;
+    height: 100%;
+    transition: var(--transition);
+    filter: brightness(0) saturate(100%) invert(58%) sepia(75%) saturate(452%) hue-rotate(7deg) brightness(92%) contrast(84%);
+}
+
+.service-card:hover .microphone-svg {
+    transform: scale(1.1);
+    filter: brightness(0) saturate(100%) invert(58%) sepia(75%) saturate(452%) hue-rotate(7deg) brightness(92%) contrast(84%);
+}
+
+/* Сакура SVG */
+.cherry-blossom-svg {
+    width: 100%;
+    height: 100%;
+    transition: var(--transition);
+    filter: brightness(0) saturate(100%) invert(58%) sepia(75%) saturate(452%) hue-rotate(7deg) brightness(92%) contrast(84%);
+}
+
+.service-card:hover .cherry-blossom-svg {
+    transform: scale(1.1);
+    filter: brightness(0) saturate(100%) invert(58%) sepia(75%) saturate(452%) hue-rotate(7deg) brightness(92%) contrast(84%);
 }
