@@ -7,22 +7,20 @@
 
 // Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.innerWidth >= 992) {
+        const cursorDot = document.createElement('div');
+        const cursorDotOutline = document.createElement('div');
+        cursorDot.classList.add('cursor-dot');
+        cursorDotOutline.classList.add('cursor-dot-outline');
+        document.body.appendChild(cursorDot);
+        document.body.appendChild(cursorDotOutline);
+    }
     const nav = document.querySelector('.nav');
     const menuBtn = document.querySelector('.burger-menu');
     const menu = document.querySelector('.menu');
     const sections = document.querySelectorAll('section');
     const scrollTopBtn = document.querySelector('.scroll-top');
     const animatedElements = document.querySelectorAll('.fade-in, .scale-in');
-    
-    // Создаем элементы для кастомного курсора
-    const cursorDot = document.createElement('div');
-    const cursorDotOutline = document.createElement('div');
-    
-    cursorDot.classList.add('cursor-dot');
-    cursorDotOutline.classList.add('cursor-dot-outline');
-    
-    document.body.appendChild(cursorDot);
-    document.body.appendChild(cursorDotOutline);
     
     let cursorVisible = false;
     
@@ -182,15 +180,18 @@ document.addEventListener('DOMContentLoaded', () => {
         modalFooter.classList.add('modal-footer');
         
         const contactBtn = document.createElement('a');
-        contactBtn.href = "tel:+77777777777";
+        contactBtn.href = "tel:+77007172120";
         contactBtn.classList.add('btn');
         contactBtn.textContent = 'Позвонить';
         
         const whatsappBtn = document.createElement('a');
-        whatsappBtn.href = "https://wa.me/77777777777";
-        whatsappBtn.classList.add('btn', 'whatsapp-btn');
+        whatsappBtn.setAttribute('onClick', "window.open('https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+мероприятие&type=phone_number&app_absent=0', '_blank')");
+        whatsappBtn.classList.add('btn', 'btn-secondary');
+        whatsappBtn.style.backgroundColor = '#25D366';
+        whatsappBtn.style.color = '#ffffff';
+        whatsappBtn.style.marginLeft = '10px';
+        whatsappBtn.style.cursor = 'pointer';
         whatsappBtn.textContent = 'WhatsApp';
-        whatsappBtn.target = '_blank';
         
         modalFooter.appendChild(contactBtn);
         modalFooter.appendChild(whatsappBtn);
@@ -206,195 +207,189 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             const galleryImages = modalBody.querySelectorAll('.gallery-item img');
             galleryImages.forEach(img => {
-                img.addEventListener('click', function() {
-                    openFullscreenImage(this.src, this.alt);
+                img.addEventListener('click', () => {
+                    openFullscreenImage(img.src, img.alt);
                 });
             });
         }, 100);
     }
     
     function closeModal() {
-        if (!modal) return;
-        modal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    
-    // Функция для открытия изображения в полный экран
-    function openFullscreenImage(src, alt) {
-        const fullscreenModal = document.createElement('div');
-        fullscreenModal.className = 'modal fullscreen-modal active';
-        
-        fullscreenModal.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>${alt}</h3>
-                    <button class="modal-close-btn">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <img src="${src}" alt="${alt}">
-                    </div>
-                </div>
-            `;
-            
-        document.body.appendChild(fullscreenModal);
-        document.body.style.overflow = 'hidden';
-        
-        const closeBtn = fullscreenModal.querySelector('.modal-close-btn');
-        closeBtn.addEventListener('click', () => {
-            fullscreenModal.remove();
+        if (modal) {
+            modal.classList.remove('active');
             document.body.style.overflow = '';
-        });
-        
-        fullscreenModal.addEventListener('click', (e) => {
-            if (e.target === fullscreenModal) {
-                fullscreenModal.remove();
-                document.body.style.overflow = '';
-            }
-        });
+        }
     }
     
-    // Обработчики для карточек услуг
-    const serviceCards = document.querySelectorAll('.service-card');
-    serviceCards.forEach((card, index) => {
-        // Устанавливаем стиль курсора по умолчанию
-        card.style.cursor = 'default';
-    });
-
-    // Обработчики для карточек артистов
-    const artistCards = document.querySelectorAll('.artist-card');
-    artistCards.forEach((card, index) => {
-        // Устанавливаем стиль курсора по умолчанию
-        card.style.cursor = 'default';
-    });
-    
-    // Закрытие модального окна при клике вне его содержимого
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
+    function openFullscreenImage(src, alt) {
+        const fullscreenModal = document.getElementById('fullscreen-modal');
+        const fullscreenImage = document.getElementById('fullscreen-image');
+        
+        if (!fullscreenModal || !fullscreenImage) {
+            console.error('Элементы для полноэкранного просмотра не найдены');
+            return;
         }
-    });
+        
+        fullscreenImage.src = src;
+        fullscreenImage.alt = alt || 'Полноэкранное изображение';
+        
+        fullscreenModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
     
-    // Обработка формы обратной связи
+    // Форма обратной связи
     const contactForm = {
+        form: document.querySelector('.contact-form'),
+        submitBtn: null,
+        formStatus: document.createElement('div'),
+        
         init() {
-            // Инициализация прямых методов связи
+            if (!this.form) return;
+            
+            this.submitBtn = this.form.querySelector('button[type="submit"]');
+            this.formStatus.className = 'form-status';
+            this.form.appendChild(this.formStatus);
+            
+            this.form.addEventListener('submit', this.handleSubmit.bind(this));
             this.initDirectContacts();
         },
         
         initDirectContacts() {
-            // Обработчики для кнопок звонка и WhatsApp
-            document.querySelectorAll('.btn-primary, .call-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.location.href = "tel:+79999999999";
+            const directContactButtons = document.querySelectorAll('.contact-method a, .cta-buttons a');
+            
+            directContactButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Предотвращаем стандартное поведение только для кнопок, которые не должны перенаправлять
+                    if (!this.href || this.href === '#') {
+                        e.preventDefault();
+                    }
+                    
+                    // Добавляем отслеживание для всех кнопок
+                    const contactType = this.textContent.trim();
+                    console.log(`Пользователь выбрал контакт: ${contactType}`);
+                    
+                    // Если это телефонный номер для звонка - не нужно предотвращать стандартное поведение
+                    if (this.href && this.href.startsWith('tel:')) {
+                        console.log(`Звонок на номер: ${this.href.replace('tel:', '')}`);
+                    }
+                    
+                    // Если это WhatsApp - не нужно предотвращать стандартное поведение
+                    if (this.href && this.href.startsWith('https://api.whatsapp.com/')) {
+                        console.log(`Переход в WhatsApp: ${this.href}`);
+                    }
                 });
             });
+        },
+        
+        handleSubmit(e) {
+            e.preventDefault();
             
-            document.querySelectorAll('.btn-secondary, .whatsapp-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.open("https://wa.me/79999999999", "_blank");
-                });
-            });
-            
-            // Анимация для QR кода
-            const qrCode = document.querySelector('.qr-code');
-            if (qrCode) {
-                const qrImage = qrCode.querySelector('.qr-image');
-                
-                // Анимация пульсации при наведении
-                qrImage?.addEventListener('mouseenter', () => {
-                    qrImage.style.transform = 'scale(1.05)';
-                });
-                
-                qrImage?.addEventListener('mouseleave', () => {
-                    qrImage.style.transform = 'scale(1)';
-                });
+            if (this.submitBtn) {
+                this.submitBtn.disabled = true;
+                this.submitBtn.textContent = 'Отправка...';
             }
+            
+            // Здесь будет код отправки формы на сервер
+            
+            // Имитация отправки формы
+            setTimeout(() => {
+                this.showStatus('Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.', 'success');
+                
+                if (this.submitBtn) {
+                    this.submitBtn.disabled = false;
+                    this.submitBtn.textContent = 'Отправить';
+                }
+                
+                this.form.reset();
+            }, 1500);
+        },
+        
+        showStatus(message, type) {
+            this.formStatus.textContent = message;
+            this.formStatus.className = `form-status ${type}`;
+            
+            setTimeout(() => {
+                this.formStatus.textContent = '';
+                this.formStatus.className = 'form-status';
+            }, 5000);
         }
     };
     
-    // Изменение стиля навигации при прокрутке
+    // Функции инициализации
     function initScrolledNav() {
-        const nav = document.querySelector('.nav');
+        handleScroll();
         
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 100) {
-                nav.classList.add('scrolled');
-            } else {
-                nav.classList.remove('scrolled');
-            }
+        menuBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleMenu();
         });
-    }
-
-    // Мобильное меню
-    function initMobileMenu() {
-        const burgerMenu = document.querySelector('.burger-menu');
-        const menu = document.querySelector('.menu');
         
-        burgerMenu.addEventListener('click', () => {
-            burgerMenu.classList.toggle('active');
+        window.addEventListener('scroll', handleScroll);
+    }
+    
+    function initMobileMenu() {
+        const burgerMenuBtn = document.querySelector('.burger-menu');
+        
+        burgerMenuBtn?.addEventListener('click', function(e) {
+            e.preventDefault();
+            burgerMenuBtn.classList.toggle('active');
             menu.classList.toggle('active');
         });
         
         // Закрываем меню при клике на ссылку
-        const menuLinks = document.querySelectorAll('.menu a');
-        menuLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                burgerMenu.classList.remove('active');
+        document.querySelectorAll('.menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                burgerMenuBtn.classList.remove('active');
                 menu.classList.remove('active');
             });
         });
     }
-
-    // Плавная прокрутка к якорям
+    
     function initSmoothScroll() {
-        const anchors = document.querySelectorAll('a[href*="#"]');
-        
-        anchors.forEach(anchor => {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                const blockID = anchor.getAttribute('href').substring(1);
-                const element = document.getElementById(blockID);
+                const targetId = this.getAttribute('href');
                 
-                if (element) {
-                    window.scrollTo({
-                        top: element.offsetTop - 100,
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    // Закрываем мобильное меню, если открыто
+                    menuBtn.classList.remove('active');
+                    menu.classList.remove('active');
+                    
+                    // Плавная прокрутка к элементу
+                    targetElement.scrollIntoView({
                         behavior: 'smooth'
                     });
                 }
             });
         });
     }
-
-    // Кнопка "Наверх"
+    
     function initScrollToTop() {
-        const scrollTopBtn = document.querySelector('.scroll-top');
-        
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                scrollTopBtn.classList.add('active');
-            } else {
-                scrollTopBtn.classList.remove('active');
-            }
-        });
-        
-        scrollTopBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+        if (scrollTopBtn) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 500) {
+                    scrollTopBtn.classList.add('active');
+                } else {
+                    scrollTopBtn.classList.remove('active');
+                }
             });
-        });
+            
+            scrollTopBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
     }
-
-    // Инициализация всех функций при загрузке страницы
-    initScrolledNav();
-    initMobileMenu();
-    initSmoothScroll();
-    initScrollToTop();
-
+    
     // Функция для проверки загрузки изображений
     function checkImageExists(url) {
         return new Promise((resolve) => {
@@ -404,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
             img.src = url;
         });
     }
-
+    
     // Функция исправления ошибок с путями к изображениям
     function fixImagePaths() {
         console.log('Проверяем и исправляем пути к изображениям...');
@@ -420,69 +415,161 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // Проверяем существование элементов перед инициализацией слайдера отзывов
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const dots = document.querySelectorAll('.dot');
     
-    function showSlide(n) {
-        // Проверяем, существуют ли слайды
-        if (!slides || slides.length === 0) return;
+    // Настройка и инициализация слайдера отзывов
+    function initTestimonials() {
+        const slider = document.querySelector('.testimonials-slider');
         
-        // Скрываем все слайды
-        for (let i = 0; i < slides.length; i++) {
-            if (slides[i]) slides[i].style.display = 'none';
+        if (!slider) {
+            console.warn('Слайдер отзывов не найден');
+            return;
         }
         
-        // Убираем активный класс со всех точек
-        if (dots && dots.length > 0) {
-            for (let i = 0; i < dots.length; i++) {
-                if (dots[i]) dots[i].classList.remove('active');
-            }
-        }
+        console.log('Инициализация слайдера отзывов с кастомным скроллбаром');
         
-        // Показываем текущий слайд, если он существует
-        if (slides[n]) {
-        slides[n].style.display = 'block';
-            
-            // Добавляем активный класс для текущей точки
-            if (dots && dots.length > 0 && dots[n]) {
-        dots[n].classList.add('active');
-            }
-        }
+        // Добавляем возможность скроллить мышкой (drag to scroll)
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            slider.style.cursor = 'grabbing';
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+        
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.style.cursor = 'grab';
+        });
+        
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.style.cursor = 'grab';
+        });
+        
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2; // Скорость скролла
+            slider.scrollLeft = scrollLeft - walk;
+        });
+        
+        // Инициализируем стиль курсора
+        slider.style.cursor = 'grab';
+        
+        // Инициализация модальных окон для отзывов
+        initTestimonialModals();
     }
     
-    function nextSlide() {
-        // Проверяем, существуют ли слайды
-        if (!slides || slides.length === 0) return;
+    // Функция для инициализации модальных окон отзывов
+    function initTestimonialModals() {
+        // Находим все отзывы
+        const testimonialContents = document.querySelectorAll('.testimonial-content');
         
-        currentSlide = (currentSlide + 1) % slides.length;
-        showSlide(currentSlide);
-    }
-    
-    // Инициализируем слайдер только если есть слайды
-    if (slides && slides.length > 0) {
-        try {
-        showSlide(currentSlide);
-        setInterval(nextSlide, 5000);
+        if (testimonialContents.length === 0) {
+            console.warn('Отзывы не найдены');
+            return;
+        }
         
-            // Инициализируем точки только если они существуют
-            if (dots && dots.length > 0) {
-                for (let i = 0; i < dots.length; i++) {
-                    if (dots[i]) {
-                        dots[i].addEventListener('click', () => {
-                            currentSlide = i;
-                showSlide(currentSlide);
-                        });
+        console.log('Инициализация модальных окон для отзывов');
+        
+        // Добавляем обработчики событий для каждого отзыва
+        testimonialContents.forEach(content => {
+            // Добавляем обработчик клика на весь блок отзыва
+            content.addEventListener('click', function(e) {
+                // Проверяем, что клик не был на кнопке ""
+                if (!e.target.classList.contains('read-more')) {
+                    const testimonialId = this.getAttribute('data-testimonial-id');
+                    if (!testimonialId) {
+                        console.error('Не указан ID отзыва');
+                        return;
                     }
+                    
+                    // Открываем соответствующее модальное окно
+                    openTestimonialModal(testimonialId);
+                }
+            });
+            
+            // Добавляем отдельный обработчик для кнопки ""
+            const readMoreBtn = content.querySelector('.read-more');
+            if (readMoreBtn) {
+                readMoreBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Предотвращаем всплытие события
+                    
+                    const testimonialId = this.parentElement.getAttribute('data-testimonial-id');
+                    if (!testimonialId) {
+                        console.error('Не указан ID отзыва');
+                        return;
+                    }
+                    
+                    // Открываем соответствующее модальное окно
+                    openTestimonialModal(testimonialId);
+                });
+            }
+        });
+        
+        // Добавляем обработчики для закрытия модальных окон
+        const closeButtons = document.querySelectorAll('.testimonial-modal-close');
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const modal = this.closest('.testimonial-modal');
+                closeTestimonialModal(modal);
+            });
+        });
+        
+        // Закрытие по клику вне контента модального окна
+        const modals = document.querySelectorAll('.testimonial-modal');
+        modals.forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeTestimonialModal(this);
+                }
+            });
+        });
+        
+        // Закрытие по клавише ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.testimonial-modal.active');
+                if (activeModal) {
+                    closeTestimonialModal(activeModal);
                 }
             }
-        } catch (error) {
-            console.error('Ошибка при инициализации слайдера:', error);
-        }
+        });
     }
-
+    
+    // Функция для открытия модального окна отзыва
+    function openTestimonialModal(testimonialId) {
+        const modal = document.getElementById(`testimonial-modal-${testimonialId}`);
+        if (!modal) return;
+        
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Функция для закрытия модального окна отзыва
+    function closeTestimonialModal(modal) {
+        if (!modal) return;
+        
+        console.log('Закрываем модальное окно отзыва');
+        
+        // Запускаем анимацию закрытия
+        const modalContent = modal.querySelector('.testimonial-modal-content');
+        if (modalContent) {
+            modalContent.style.opacity = '0';
+            modalContent.style.transform = 'translateY(30px)';
+        }
+        
+        // Закрываем модальное окно после завершения анимации
+        setTimeout(() => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }, 300);
+    }
+    
     // Функция инициализации модальных окон портфолио
     function initPortfolio() {
         console.log('Инициализация портфолио...');
@@ -571,11 +658,6 @@ document.addEventListener('DOMContentLoaded', () => {
         orderButtons = document.createElement('div');
         orderButtons.className = 'order-buttons';
         
-        // Добавляем заголовок
-        const orderTitle = document.createElement('h4');
-        orderTitle.textContent = 'Заказать эту услугу:';
-        orderButtons.appendChild(orderTitle);
-        
         // Создаем контейнер для кнопок
         const orderBtnsContainer = document.createElement('div');
         orderBtnsContainer.className = 'order-btns-container';
@@ -585,9 +667,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Создаем кнопку WhatsApp
         const whatsappButton = document.createElement('a');
-        whatsappButton.href = `https://wa.me/77719057564?text=Здравствуйте!%20Хочу%20заказать%20мероприятие%20как%20${encodeURIComponent(projectTitle)}`;
+        whatsappButton.setAttribute('onClick', `window.open('https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+мероприятие+как+${encodeURIComponent(projectTitle)}&type=phone_number&app_absent=0', '_blank')`);
         whatsappButton.className = 'order-btn whatsapp-btn';
-        whatsappButton.target = "_blank";
+        whatsappButton.style.backgroundColor = '#25D366';
+        whatsappButton.style.cursor = 'pointer';
         whatsappButton.innerHTML = '<i class="fab fa-whatsapp"></i> Заказать через WhatsApp';
         orderBtnsContainer.appendChild(whatsappButton);
         
@@ -657,49 +740,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }, true); // Используем фазу перехвата (capture) для перехвата всех ошибок
     }
-
-    // Вызываем функцию настройки обработки ошибок изображений
-    window.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM загружен, настраиваем обработку ошибок изображений');
-        setupImageErrorHandling();
-    });
-
-    // Вызываем инициализацию портфолио после полной загрузки страницы
-    window.addEventListener('load', function() {
-        console.log('Страница полностью загружена');
-        // Исправляем изображения перед инициализацией портфолио
-        fixImagePaths();
-        // Инициализируем портфолио
-        initPortfolio();
-    });
-
-    // Исправляем функцию для бургер-меню
-    const burgerMenuBtn = document.querySelector('.burger-menu');
-    
-    burgerMenuBtn?.addEventListener('click', function() {
-        burgerMenuBtn.classList.toggle('active');
-        menu.classList.toggle('active');
-        console.log('Бургер-меню нажато');
-    });
-
-    // Закрываем меню при клике на ссылку в меню
-    document.querySelectorAll('.menu a').forEach(link => {
-        link.addEventListener('click', function() {
-            burgerMenuBtn.classList.remove('active');
-            menu.classList.remove('active');
-        });
-    });
-
-    document.querySelectorAll('.menu a[href^="#"]').forEach(link => {
-        link.addEventListener('click', smoothScroll);
-    });
-    
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', closeMenu);
-    
-    scrollTopBtn?.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
     
     // Кинематографические эффекты для секции обратной связи
     function initCinematicEffects() {
@@ -707,45 +747,79 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     
-    // Инициализация кинематографических эффектов
+    // Инициализация
+    initScrolledNav();
+    initMobileMenu();
+    initSmoothScroll();
+    initScrollToTop();
+    fixImagePaths();
+    initPortfolio();
+    setupModalClosing();
+    setupImageErrorHandling();
     initCinematicEffects();
-
     handleElementsAnimation();
     contactForm.init();
+    
+    // Инициализация слайдера отзывов
+    initTestimonials();
 
-    // Фильтрация портфолио
-    function initPortfolioFilter() {
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const portfolioItems = document.querySelectorAll('.portfolio-item');
+    // Добавляем hover-эффект для адресной кнопки
+    const addressLink = document.querySelector('a[href*="2gis.kz"]');
+    if (addressLink) {
+        const addressButton = addressLink.querySelector('div');
+        const addressIcon = addressLink.querySelector('.fa-map-marker-alt');
         
-        // Функция для фильтрации элементов
-        function filterPortfolio(category) {
-            portfolioItems.forEach(item => {
-                const itemCategory = item.dataset.category;
-                if (category === 'all' || itemCategory === category) {
-                    item.classList.remove('hide');
-                } else {
-                    item.classList.add('hide');
-                }
-            });
-        }
+        addressLink.addEventListener('mouseenter', function() {
+            addressButton.style.backgroundColor = '#c9a431';
+            addressButton.style.transform = 'translateY(-2px)';
+            addressButton.style.boxShadow = '0 6px 15px rgba(0,0,0,0.3)';
+            addressIcon.style.transform = 'scale(1.1)';
+        });
         
-        // Обработчик клика на кнопки фильтра
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Удаляем класс active у всех кнопок
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                
-                // Добавляем класс active текущей кнопке
-                this.classList.add('active');
-                
-                // Фильтруем элементы по выбранной категории
-                const category = this.dataset.filter;
-                filterPortfolio(category);
-            });
+        addressLink.addEventListener('mouseleave', function() {
+            addressButton.style.backgroundColor = '#D4AF37';
+            addressButton.style.transform = 'translateY(0)';
+            addressButton.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+            addressIcon.style.transform = 'scale(1)';
         });
     }
-
-    // Инициализация фильтрации портфолио
-    initPortfolioFilter();
 }); 
+
+function generateContactHTML() {
+    return `
+            <div class="contact-info">
+            <h3>Наши контакты</h3>
+            <p><i class="fas fa-map-marker-alt"></i> УЛИЦА АКМЕШИТ, 19/1</p>
+            <p><i class="fas fa-phone"></i> <a href="tel:+77007172120">+7 (700) 717-21-20</a></p>
+            <p><i class="fas fa-envelope"></i> <a href="mailto:info@prazdnikastana.kz">info@prazdnikastana.kz</a></p>
+            <div class="social-links">
+                <h4>Связаться с нами:</h4>
+                <div class="social-icons">
+                    <a href="https://www.instagram.com/the_wedday?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+связаться&type=phone_number&app_absent=0" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function generateFooterHTML() {
+    return `
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="images/logo.png" alt="The Wedday Logo">
+                <p>The Wedday - Ваш надежный партнер для организации свадеб и мероприятий любой сложности в Астане</p>
+                </div>
+            <div class="footer-links">
+                <h3>Контакты</h3>
+                <span><i class="fas fa-map-marker-alt"></i> УЛИЦА АКМЕШИТ, 19/1</span>
+                <span><i class="fas fa-phone"></i> <a href="tel:+77007172120">+7 (700) 717-21-20</a></span>
+                <span><i class="fas fa-envelope"></i> <a href="mailto:info@prazdnikastana.kz">info@prazdnikastana.kz</a></span>
+                <div class="social-icons">
+                    <a href="https://www.instagram.com/the_wedday?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+связаться&type=phone_number&app_absent=0"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    `;
+} 
