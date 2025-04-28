@@ -185,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
         contactBtn.textContent = 'Позвонить';
         
         const whatsappBtn = document.createElement('a');
-        whatsappBtn.setAttribute('onClick', "window.open('https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+мероприятие&type=phone_number&app_absent=0', '_blank')");
+        whatsappBtn.href = "https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+мероприятие&type=phone_number&app_absent=0";
+        whatsappBtn.target = "_blank";
         whatsappBtn.classList.add('btn', 'btn-secondary');
         whatsappBtn.style.backgroundColor = '#25D366';
         whatsappBtn.style.color = '#ffffff';
