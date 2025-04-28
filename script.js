@@ -667,7 +667,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Создаем кнопку WhatsApp
         const whatsappButton = document.createElement('a');
-        whatsappButton.setAttribute('onClick', `window.open('https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+мероприятие+как+${encodeURIComponent(projectTitle)}&type=phone_number&app_absent=0', '_blank')`);
+        whatsappButton.href = `https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+мероприятие+как+${encodeURIComponent(projectTitle)}&type=phone_number&app_absent=0`;
+        whatsappButton.target = '_blank';
         whatsappButton.className = 'order-btn whatsapp-btn';
         whatsappButton.style.backgroundColor = '#25D366';
         whatsappButton.style.cursor = 'pointer';
