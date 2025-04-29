@@ -3715,3 +3715,34 @@ img {
 .fullscreen-modal .close-btn:hover {
     transform: rotate(90deg);
 }
+
+/* Медиа-запросы для мобильной версии */
+@media (max-width: 768px) {
+    .cover-title {
+        font-size: 3.2rem !important; /* Увеличиваем заголовок */
+        line-height: 1.2 !important;
+        margin-bottom: 15px !important;
+        font-weight: 700 !important;
+    }
+    
+    .cover-description {
+        font-size: 1.1rem !important; /* Уменьшаем подзаголовок */
+        letter-spacing: 0.5px !important;
+        font-weight: 500 !important;
+        max-width: 95% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 576px) {
+    .cover-title {
+        font-size: 2.8rem !important; /* Адаптируем размер для совсем маленьких экранов */
+        line-height: 1.2 !important;
+    }
+    
+    .cover-description {
+        font-size: 0.9rem !important; /* Еще уменьшаем подзаголовок */
+    }
+}
