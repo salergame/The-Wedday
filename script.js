@@ -7,82 +7,12 @@
 
 // Инициализация при загрузке DOM
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.innerWidth >= 992) {
-        const cursorDot = document.createElement('div');
-        const cursorDotOutline = document.createElement('div');
-        cursorDot.classList.add('cursor-dot');
-        cursorDotOutline.classList.add('cursor-dot-outline');
-        document.body.appendChild(cursorDot);
-        document.body.appendChild(cursorDotOutline);
-    }
     const nav = document.querySelector('.nav');
     const menuBtn = document.querySelector('.burger-menu');
     const menu = document.querySelector('.menu');
     const sections = document.querySelectorAll('section');
     const scrollTopBtn = document.querySelector('.scroll-top');
     const animatedElements = document.querySelectorAll('.fade-in, .scale-in');
-    
-    let cursorVisible = false;
-    
-    // Позиции курсора
-    let _x = 0;
-    let _y = 0;
-    
-    const toggleCursorVisibility = () => {
-        if (cursorVisible) {
-            cursorDot.style.opacity = '1';
-            cursorDotOutline.style.opacity = '1';
-        } else {
-            cursorDot.style.opacity = '0';
-            cursorDotOutline.style.opacity = '0';
-        }
-    };
-    
-    const toggleCursorSize = (type) => {
-        if (type === 'enter') {
-            cursorDotOutline.style.transform = 'translate(-50%, -50%) scale(1.5)';
-        } else {
-            cursorDotOutline.style.transform = 'translate(-50%, -50%) scale(1)';
-        }
-    };
-    
-    const mouseIsMoving = (e) => {
-        cursorVisible = true;
-        toggleCursorVisibility();
-        
-        _x = e.clientX;
-        _y = e.clientY;
-        
-        cursorDot.style.top = `${_y}px`;
-        cursorDot.style.left = `${_x}px`;
-        cursorDotOutline.style.top = `${_y}px`;
-        cursorDotOutline.style.left = `${_x}px`;
-    };
-    
-    document.addEventListener('mousedown', () => {
-        cursorDotOutline.style.transform = 'translate(-50%, -50%) scale(0.9)';
-    });
-    
-    document.addEventListener('mouseup', () => {
-        cursorDotOutline.style.transform = 'translate(-50%, -50%) scale(1.5)';
-    });
-    
-    document.addEventListener('mouseenter', () => {
-        cursorVisible = true;
-        toggleCursorVisibility();
-    });
-    
-    document.addEventListener('mouseleave', () => {
-        cursorVisible = false;
-        toggleCursorVisibility();
-    });
-    
-    document.addEventListener('mousemove', mouseIsMoving);
-    
-    document.querySelectorAll('a, button, .btn, input, textarea, .service-card, .portfolio-item').forEach((el) => {
-        el.addEventListener('mouseenter', () => toggleCursorSize('enter'));
-        el.addEventListener('mouseleave', () => toggleCursorSize('leave'));
-    });
     
     let isMenuOpen = false;
     
@@ -151,6 +81,63 @@ document.addEventListener('DOMContentLoaded', () => {
     // Модальные окна для видео и карточек
     const modal = document.getElementById('modal');
     const modalContent = document.querySelector('.modal-content');
+    
+    // Функции инициализации
+    function initScrolledNav() {
+        handleScroll();
+        
+        menuBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleMenu();
+        });
+        
+        window.addEventListener('scroll', handleScroll);
+    }
+    
+    function initMobileMenu() {
+        const burgerMenuBtn = document.querySelector('.burger-menu');
+        
+        burgerMenuBtn?.addEventListener('click', function(e) {
+            e.preventDefault();
+            burgerMenuBtn.classList.toggle('active');
+            menu.classList.toggle('active');
+        });
+        
+        // Закрываем меню при клике на ссылку
+        document.querySelectorAll('.menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                burgerMenuBtn.classList.remove('active');
+                menu.classList.remove('active');
+            });
+        });
+    }
+    
+    function initSmoothScroll() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    // Закрываем мобильное меню, если открыто
+                    menuBtn.classList.remove('active');
+                    menu.classList.remove('active');
+                    
+                    // Плавная прокрутка к элементу
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    }
+    
+    // Модальные окна для видео и карточек
     const modalClose = document.querySelector('.modal-close');
     
     function openModal(content, title) {
@@ -165,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTitle.textContent = title || '';
         
         const closeBtn = document.createElement('button');
-        closeBtn.classList.add('modal-close-btn');
+        closeBtn.className = 'modal-close-btn';
         closeBtn.innerHTML = '&times;';
         closeBtn.addEventListener('click', closeModal);
         
@@ -208,8 +195,17 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             const galleryImages = modalBody.querySelectorAll('.gallery-item img');
             galleryImages.forEach(img => {
-                img.addEventListener('click', () => {
-                    openFullscreenImage(img.src, img.alt);
+                img.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const src = this.src;
+                    const alt = this.alt || '';
+                    const fullscreenModal = document.getElementById('fullscreen-modal');
+                    const fullscreenImage = document.getElementById('fullscreen-image');
+                    if (!fullscreenModal || !fullscreenImage) return;
+                    fullscreenImage.src = src;
+                    fullscreenImage.alt = alt;
+                    fullscreenModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
                 });
             });
         }, 100);
@@ -223,19 +219,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function openFullscreenImage(src, alt) {
+        console.log('Opening fullscreen image:', src, alt);
         const fullscreenModal = document.getElementById('fullscreen-modal');
         const fullscreenImage = document.getElementById('fullscreen-image');
         
         if (!fullscreenModal || !fullscreenImage) {
-            console.error('Элементы для полноэкранного просмотра не найдены');
-            return;
+            console.error('Fullscreen modal or image not found');
+            return false;
         }
         
         fullscreenImage.src = src;
         fullscreenImage.alt = alt || 'Полноэкранное изображение';
-        
         fullscreenModal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        
+        return false;
     }
     
     // Форма обратной связи
@@ -571,14 +569,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
     }
     
-    // Функция инициализации модальных окон портфолио
+    // Добавляем обработчик клика на изображения в галерее внутри модального окна портфолио
+    function setupPortfolioGalleryClickHandlers() {
+        const portfolioModals = document.querySelectorAll('.project-modal');
+        console.log('Найдено модальных окон портфолио:', portfolioModals.length);
+
+        portfolioModals.forEach(modal => {
+            const galleryImages = modal.querySelectorAll('.gallery-item img');
+            console.log('Найдено изображений в галерее:', galleryImages.length);
+
+            galleryImages.forEach(img => {
+                img.style.cursor = 'pointer';
+                console.log('Добавляем обработчик клика для изображения:', img.src);
+
+                img.addEventListener('click', function(e) {
+                    console.log('Клик по изображению:', this.src); // Проверим, срабатывает ли
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showFullscreenImage(this.src, this.alt || '');
+                });
+            });
+        });
+    }
+    
+    function handleGalleryImageClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const src = this.src;
+        const alt = this.alt || '';
+        showFullscreenImage(src, alt);
+    }
+    
+    // Инициализация обработчиков клика для галереи портфолио
     function initPortfolio() {
         console.log('Инициализация портфолио...');
-        
-        // Вызываем исправление изображений
         fixImagePaths();
         
-        // Обработка портфолио
         const portfolioItems = document.querySelectorAll('.portfolio-item');
         
         if (!portfolioItems || portfolioItems.length === 0) {
@@ -588,24 +615,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         console.log(`Найдено ${portfolioItems.length} элементов портфолио`);
         
-        // Проверяем, существуют ли модальные окна для проектов
-        for (let i = 0; i < portfolioItems.length; i++) {
-            const item = portfolioItems[i];
-            const projectId = item.getAttribute('data-project');
-            const modalId = `project-${projectId}`;
-            const modal = document.getElementById(modalId);
-            
-            console.log(`Проект ${i+1}: id=${projectId}, модальное окно ${modalId} ${modal ? 'найдено' : 'НЕ НАЙДЕНО'}`);
-        }
-        
-        // Добавляем обработчики событий для каждого элемента портфолио
         portfolioItems.forEach((item, index) => {
             console.log(`Настройка элемента портфолио ${index + 1}`);
-            
-            // Устанавливаем стиль курсора
             item.style.cursor = 'pointer';
             
-            // Добавляем обработчик клика
             item.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -626,17 +639,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                // Добавляем кнопки для заказа если их нет
                 addOrderButtons(modal, this);
-                
-                // Открываем модальное окно
                 modal.classList.add('active');
                 document.body.style.overflow = 'hidden';
                 console.log(`Модальное окно ${modalId} открыто`);
+                
+                // Инициализируем обработчики клика для галереи внутри модального окна
+                setupPortfolioGalleryClickHandlers();
             });
         });
         
-        // Настраиваем закрытие модальных окон
         setupModalClosing();
     }
     
@@ -723,26 +735,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Функция для глобальной обработки ошибок загрузки изображений
-    function setupImageErrorHandling() {
-        // Добавляем глобальный обработчик ошибок для всех изображений
-        document.addEventListener('error', function(e) {
-            const target = e.target;
-            
-            // Проверяем, является ли целью изображение
-            if (target.tagName.toLowerCase() === 'img') {
-                console.error(`Ошибка загрузки изображения: ${target.src}`);
-                
-                // Заменяем на плейсхолдер, если изображение не загрузилось
-                target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22300%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22300%22%20height%3D%22200%22%20fill%3D%22%23cccccc%22%2F%3E%3Ctext%20x%3D%22150%22%20y%3D%22100%22%20font-size%3D%2216%22%20text-anchor%3D%22middle%22%20alignment-baseline%3D%22middle%22%20fill%3D%22%23999999%22%3EИзображение%20не%20найдено%3C%2Ftext%3E%3C%2Fsvg%3E';
-                
-                // Устанавливаем размеры плейсхолдера
-                target.style.maxWidth = '100%';
-                target.style.height = 'auto';
-            }
-        }, true); // Используем фазу перехвата (capture) для перехвата всех ошибок
-    }
-    
     // Кинематографические эффекты для секции обратной связи
     function initCinematicEffects() {
         // Отключаем все эффекты в секции контактов
@@ -754,16 +746,15 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileMenu();
     initSmoothScroll();
     initScrollToTop();
-    fixImagePaths();
+    initTestimonials();
+    initTestimonialModals();
     initPortfolio();
     setupModalClosing();
-    setupImageErrorHandling();
-    initCinematicEffects();
-    handleElementsAnimation();
-    contactForm.init();
+    // initGalleryImageClickHandlers();
+    // preventGalleryImageDefaultBehavior(); // Закомментируйте эту строку
     
-    // Инициализация слайдера отзывов
-    initTestimonials();
+    // Исправляем пути к изображениям
+    fixImagePaths();
 
     // Добавляем hover-эффект для адресной кнопки
     const addressLink = document.querySelector('a[href*="2gis.kz"]');
@@ -785,43 +776,276 @@ document.addEventListener('DOMContentLoaded', () => {
             addressIcon.style.transform = 'scale(1)';
         });
     }
-}); 
+
+    // Очищаем все конфликтующие обработчики событий для модальных окон
+    document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+    const fullscreenModal = document.getElementById('fullscreen-modal');
+    if (fullscreenModal) fullscreenModal.classList.remove('active');
+    
+    // Удаляем конфликтующие обработчики событий
+    document.querySelectorAll('.modal .gallery-item img').forEach(img => {
+        const clone = img.cloneNode(true);
+        img.parentNode.replaceChild(clone, img);
+    });
+
+    // Инициализация полноэкранного просмотра непосредственно после загрузки DOM
+    setupFullscreenViewer();
+    
+    // После полной загрузки страницы проверяем все изображения
+    window.addEventListener('load', function() {
+        // Убеждаемся, что все изображения в галерее работают с полноэкранным режимом
+        document.querySelectorAll('.gallery-item img').forEach(img => {
+            img.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                showFullscreenImage(this.src, this.alt);
+                return false;
+            });
+        });
+        
+        // Обработчики также для тегов <a> внутри gallery-item
+        document.querySelectorAll('.gallery-item a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Извлекаем URL из атрибута onclick, если он есть
+                let src = '';
+                let alt = '';
+                
+                // Проверяем, есть ли атрибут onclick с вызовом openFullscreenImage
+                if (this.getAttribute('onclick') && this.getAttribute('onclick').includes('openFullscreenImage')) {
+                    const onclickAttr = this.getAttribute('onclick');
+                    const match = onclickAttr.match(/openFullscreenImage\(['"]([^'"]+)['"],\s*['"]([^'"]+)['"]\)/);
+                    if (match && match.length > 2) {
+                        src = match[1];
+                        alt = match[2];
+                    }
+                } else {
+                    // Получаем изображение внутри ссылки
+                    const img = this.querySelector('img');
+                    if (img) {
+                        src = img.src;
+                        alt = img.alt;
+                    }
+                }
+                
+                if (src) {
+                    showFullscreenImage(src, alt);
+                }
+                
+                return false;
+            });
+        });
+    });
+});
 
 function generateContactHTML() {
-    return `
-            <div class="contact-info">
-            <h3>Наши контакты</h3>
-            <p><i class="fas fa-map-marker-alt"></i> УЛИЦА АКМЕШИТ, 19/1</p>
-            <p><i class="fas fa-phone"></i> <a href="tel:+77007172120">+7 (700) 717-21-20</a></p>
-            <p><i class="fas fa-envelope"></i> <a href="mailto:info@prazdnikastana.kz">info@prazdnikastana.kz</a></p>
-            <div class="social-links">
-                <h4>Связаться с нами:</h4>
-                <div class="social-icons">
-                    <a href="https://www.instagram.com/the_wedday?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="social-icon"><i class="fab fa-instagram"></i></a>
-                    <a href="https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+связаться&type=phone_number&app_absent=0" class="social-icon"><i class="fab fa-whatsapp"></i></a>
-                </div>
-            </div>
-        </div>
-    `;
+    return '';
 }
 
-function generateFooterHTML() {
-    return `
-        <div class="footer-content">
-            <div class="footer-logo">
-                <img src="images/logo.png" alt="The Wedday Logo">
-                <p>The Wedday - Ваш надежный партнер для организации свадеб и мероприятий любой сложности в Астане</p>
-                </div>
-            <div class="footer-links">
-                <h3>Контакты</h3>
-                <span><i class="fas fa-map-marker-alt"></i> УЛИЦА АКМЕШИТ, 19/1</span>
-                <span><i class="fas fa-phone"></i> <a href="tel:+77007172120">+7 (700) 717-21-20</a></span>
-                <span><i class="fas fa-envelope"></i> <a href="mailto:info@prazdnikastana.kz">info@prazdnikastana.kz</a></span>
-                <div class="social-icons">
-                    <a href="https://www.instagram.com/the_wedday?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+связаться&type=phone_number&app_absent=0"><i class="fab fa-whatsapp"></i></a>
-                </div>
-            </div>
-        </div>
-    `;
+function closeFullscreenModal() {
+    const fullscreenModal = document.getElementById('fullscreen-modal');
+    if (fullscreenModal) {
+        fullscreenModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function initGalleryImageClickHandlers() {
+    // Находим все модальные окна с галереями изображений
+    const projectModals = document.querySelectorAll('.project-modal');
+    
+    // Добавляем обработчики для кнопки закрытия полноэкранного просмотра
+    const closeFullscreenBtn = document.querySelector('#fullscreen-modal .modal-close-btn');
+    if (closeFullscreenBtn) {
+        closeFullscreenBtn.addEventListener('click', closeFullscreenModal);
+    }
+    
+    // Добавляем обработчик для кнопки "Закрыть"
+    const closeBtn = document.getElementById('close-fullscreen');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeFullscreenModal);
+    }
+    
+    // Добавляем обработчик для кнопки "Скачать"
+    const downloadBtn = document.getElementById('download-image');
+    if (downloadBtn) {
+        downloadBtn.addEventListener('click', function() {
+            const fullscreenImage = document.getElementById('fullscreen-image');
+            if (fullscreenImage && fullscreenImage.src) {
+                // Создаем временную ссылку для скачивания
+                const a = document.createElement('a');
+                a.href = fullscreenImage.src;
+                a.download = fullscreenImage.alt || 'image';
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        });
+    }
+    
+    // Добавляем обработчики для закрытия полноэкранного просмотра по клику вне изображения
+    const fullscreenModal = document.getElementById('fullscreen-modal');
+    if (fullscreenModal) {
+        fullscreenModal.addEventListener('click', function(e) {
+            if (e.target === fullscreenModal) {
+                closeFullscreenModal();
+            }
+        });
+    }
+    
+    // Для каждого модального окна находим все изображения и добавляем обработчики
+    projectModals.forEach(modal => {
+        const galleryItems = modal.querySelectorAll('.gallery-item img');
+        galleryItems.forEach(img => {
+            img.style.cursor = 'pointer'; // Добавляем указатель курсора, чтобы показать, что можно нажать
+            
+            // Обертываем изображение в контейнер, если оно еще не обернуто
+            if (!img.parentElement.classList.contains('img-container')) {
+                const imgParent = img.parentElement;
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'img-container';
+                imgContainer.style.cursor = 'pointer';
+                imgParent.insertBefore(imgContainer, img);
+                imgContainer.appendChild(img);
+            }
+            
+            // Добавляем обработчик на img и его родительский контейнер
+            const handleClick = function(e) {
+                e.preventDefault(); // Предотвращаем стандартное поведение браузера
+                e.stopPropagation(); // Останавливаем всплытие события
+                const src = img.src;
+                const alt = img.alt || '';
+                openFullscreenImage(src, alt);
+                return false; // Дополнительная защита от стандартного поведения
+            };
+            
+            img.addEventListener('click', handleClick);
+            
+            // Также добавим обработчик на родительский элемент
+            img.parentElement.addEventListener('click', handleClick);
+        });
+    });
+    
+    // Добавляем обработчик клавиши Escape для закрытия полноэкранного режима
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeFullscreenModal();
+        }
+    });
+}
+
+// Функция для предотвращения стандартного действия при клике на изображения в галерее
+function preventGalleryImageDefaultBehavior() {
+    // Находим все изображения в галереях
+    const galleryImages = document.querySelectorAll('.gallery-item img');
+    
+    // Добавляем обработчик события для каждого изображения
+    galleryImages.forEach(img => {
+        // Блокируем стандартное поведение браузера при различных способах взаимодействия
+        img.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }, true);
+        
+        img.addEventListener('mousedown', function(e) {
+            if (e.button === 1) { // Средняя кнопка мыши
+                e.preventDefault();
+                return false;
+            }
+        }, true);
+        
+        img.addEventListener('auxclick', function(e) {
+            e.preventDefault();
+            return false;
+        }, true);
+        
+        img.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        }, true);
+        
+        // Блокируем drag-and-drop
+        img.setAttribute('draggable', 'false');
+        img.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        }, true);
+    });
+    
+    // Также блокируем стандартное поведение для контейнеров изображений
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    galleryItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (e.target !== this) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+    });
+}
+
+// Глобальная переменная для текущего масштаба изображения
+let currentScale = 1;
+const maxScale = 3;
+const minScale = 0.5;
+
+function setupFullscreenViewer() {
+    const fullscreenModal = document.getElementById('fullscreen-modal');
+    const fullscreenImage = document.getElementById('fullscreen-image');
+    
+    if (!fullscreenModal || !fullscreenImage) {
+        console.error('Элементы для полноэкранного просмотра не найдены');
+        return;
+    }
+    
+    // Устанавливаем стили для изображения
+    fullscreenImage.style.objectFit = 'contain'; // Изображение будет масштабироваться без обрезки
+    fullscreenImage.style.maxWidth = '100%';
+    fullscreenImage.style.maxHeight = '100%';
+    fullscreenImage.style.width = 'auto';
+    fullscreenImage.style.height = 'auto';
+    
+    // Удаляем кнопки управления, если они существуют
+    const controls = fullscreenModal.querySelector('.fullscreen-controls');
+    if (controls) {
+        controls.remove();
+    }
+}
+
+function showFullscreenImage(src, alt) {
+    console.log('Вызов showFullscreenImage:', src, alt);
+    const fullscreenModal = document.getElementById('fullscreen-modal');
+    const fullscreenImage = document.getElementById('fullscreen-image');
+
+    if (!fullscreenModal || !fullscreenImage) {
+        console.error('Fullscreen modal or image not found');
+        return false;
+    }
+
+    fullscreenImage.src = src;
+    fullscreenImage.alt = alt || 'Полноэкранное изображение';
+    fullscreenModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    console.log('Fullscreen modal opened');
+
+    return false;
+}
+
+// Функция для скачивания изображения
+function downloadFullscreenImage() {
+    const fullscreenImage = document.getElementById('fullscreen-image');
+    if (fullscreenImage && fullscreenImage.src) {
+        // Создаем временную ссылку для скачивания
+        const a = document.createElement('a');
+        a.href = fullscreenImage.src;
+        a.download = fullscreenImage.alt || 'image';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
 } 
