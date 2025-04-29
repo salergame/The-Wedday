@@ -731,22 +731,23 @@ img {
     flex-direction: column;
     justify-content: space-between;
     width: 30px;
-    height: 25px;
+    height: 21px;
+    cursor: pointer;
     position: relative;
-    z-index: 1001;
+    z-index: 1001; /* Увеличиваем z-index, чтобы кнопка была всегда доступна */
+    transition: all 0.3s ease;
 }
 
 .burger-menu span {
-    display: block;
     width: 100%;
     height: 3px;
-    background-color: var(--white);
+    background-color: #fff;
     border-radius: 3px;
-    transition: var(--transition);
+    transition: all 0.3s ease;
 }
 
 .burger-menu.active span:nth-child(1) {
-    transform: translateY(11px) rotate(45deg);
+    transform: translateY(9px) rotate(45deg);
 }
 
 .burger-menu.active span:nth-child(2) {
@@ -754,7 +755,7 @@ img {
 }
 
 .burger-menu.active span:nth-child(3) {
-    transform: translateY(-11px) rotate(-45deg);
+    transform: translateY(-9px) rotate(-45deg);
 }
 
 @media (max-width: 992px) {
@@ -764,9 +765,42 @@ img {
     .menu.active {
         display: flex;
         flex-direction: column;
+        position: absolute;
+        top: 70px; /* Уменьшаем расстояние, чтобы убрать зазор */
+        left: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.95);
+        padding: 20px;
+        z-index: 1000;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        margin: 0; /* Убираем margin */
+        border-top: 1px solid rgba(212, 175, 55, 0.3); /* Тонкая граница вместо зазора */
     }
     .burger-menu {
         display: flex;
+        margin-right: 15px;
+    }
+    
+    /* Стили для ссылок в мобильном меню */
+    .menu.active a {
+        padding: 15px 0;
+        text-align: center;
+        margin: 5px 0;
+        font-size: 18px;
+    }
+    
+    .menu.active a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Исправление для контейнера навигации в мобильной версии */
+    .nav .container {
+        padding: 0 15px;
+    }
+    
+    /* Улучшаем позиционирование мобильного меню */
+    .nav.scrolled + .menu.active {
+        top: 60px; /* Для скроллед состояния уменьшаем расстояние еще больше */
     }
 }
 

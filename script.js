@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isMenuOpen = !isMenuOpen;
         menu.classList.toggle('active');
         menuBtn.classList.toggle('active');
+        console.log('Меню: ' + (isMenuOpen ? 'открыто' : 'закрыто'));
     }
     
     function closeMenu() {
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             isMenuOpen = false;
             menu.classList.remove('active');
             menuBtn.classList.remove('active');
+            console.log('Меню закрыто');
         }
     }
     
@@ -85,30 +87,62 @@ document.addEventListener('DOMContentLoaded', () => {
     // Функции инициализации
     function initScrolledNav() {
         handleScroll();
-        
-        menuBtn?.addEventListener('click', (e) => {
-            e.preventDefault();
-            toggleMenu();
-        });
-        
         window.addEventListener('scroll', handleScroll);
     }
     
     function initMobileMenu() {
-        const burgerMenuBtn = document.querySelector('.burger-menu');
+        if (!menuBtn || !menu) {
+            console.error('Элементы меню не найдены!');
+            return;
+        }
         
-        burgerMenuBtn?.addEventListener('click', function(e) {
+        console.log('Инициализация мобильного меню');
+        
+        // Устанавливаем правильное начальное положение меню
+        const updateMenuPosition = function() {
+            if (isMenuOpen) {
+                const navHeight = nav.offsetHeight;
+                menu.style.top = navHeight + 'px';
+            }
+        };
+        
+        // Вызываем при инициализации и при изменении размера окна
+        updateMenuPosition();
+        window.addEventListener('resize', updateMenuPosition);
+        
+        // Обработчик для открытия/закрытия меню по клику на бургер
+        menuBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            burgerMenuBtn.classList.toggle('active');
-            menu.classList.toggle('active');
+            e.stopPropagation();
+            toggleMenu();
+            console.log('Клик по бургер-меню');
+            
+            // Обновляем положение меню при открытии
+            if (isMenuOpen) {
+                updateMenuPosition();
+            }
         });
         
         // Закрываем меню при клике на ссылку
         document.querySelectorAll('.menu a').forEach(link => {
             link.addEventListener('click', function() {
-                burgerMenuBtn.classList.remove('active');
-                menu.classList.remove('active');
+                closeMenu();
+                console.log('Клик по ссылке меню');
             });
+        });
+        
+        // Закрываем меню при клике вне его
+        document.addEventListener('click', function(e) {
+            if (isMenuOpen && !menu.contains(e.target) && !menuBtn.contains(e.target)) {
+                closeMenu();
+            }
+        });
+        
+        // Закрываем меню при нажатии Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && isMenuOpen) {
+                closeMenu();
+            }
         });
     }
     
@@ -125,8 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (targetElement) {
                     // Закрываем мобильное меню, если открыто
-                    menuBtn.classList.remove('active');
-                    menu.classList.remove('active');
+                    closeMenu();
                     
                     // Плавная прокрутка к элементу
                     targetElement.scrollIntoView({
@@ -313,61 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 5000);
         }
     };
-    
-    // Функции инициализации
-    function initScrolledNav() {
-        handleScroll();
-        
-        menuBtn?.addEventListener('click', (e) => {
-            e.preventDefault();
-            toggleMenu();
-        });
-        
-        window.addEventListener('scroll', handleScroll);
-    }
-    
-    function initMobileMenu() {
-        const burgerMenuBtn = document.querySelector('.burger-menu');
-        
-        burgerMenuBtn?.addEventListener('click', function(e) {
-            e.preventDefault();
-            burgerMenuBtn.classList.toggle('active');
-            menu.classList.toggle('active');
-        });
-        
-        // Закрываем меню при клике на ссылку
-        document.querySelectorAll('.menu a').forEach(link => {
-            link.addEventListener('click', function() {
-                burgerMenuBtn.classList.remove('active');
-                menu.classList.remove('active');
-            });
-        });
-    }
-    
-    function initSmoothScroll() {
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    // Закрываем мобильное меню, если открыто
-                    menuBtn.classList.remove('active');
-                    menu.classList.remove('active');
-                    
-                    // Плавная прокрутка к элементу
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-    }
     
     function initScrollToTop() {
         if (scrollTopBtn) {
