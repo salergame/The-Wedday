@@ -1181,7 +1181,7 @@ img {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
@@ -1202,6 +1202,7 @@ img {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     transform: translateY(-50px);
     transition: transform 0.3s ease;
+    z-index: 10000;
 }
 
 .testimonial-modal.active .testimonial-modal-content {
@@ -3744,5 +3745,180 @@ img {
     
     .cover-description {
         font-size: 0.9rem !important; /* Еще уменьшаем подзаголовок */
+    }
+}
+
+.service-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.service-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.service-modal .modal-content {
+    width: 90%;
+    max-width: 600px;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 0;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(-50px);
+    transition: transform 0.3s ease;
+    z-index: 10000;
+}
+
+.service-modal.active .modal-content {
+    transform: translateY(0);
+}
+
+.service-modal .modal-header {
+    padding: 20px 25px;
+    background-color: var(--dark-bg);
+    color: var(--white);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px 10px 0 0;
+}
+
+.service-modal .modal-header h3 {
+    margin: 0;
+    font-family: var(--font-secondary);
+    font-size: 1.8rem;
+    color: var(--primary-color);
+}
+
+.service-modal .modal-body {
+    padding: 30px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.service-modal .modal-body p {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+    .service-modal .modal-content {
+        width: 95%;
+        max-width: none;
+    }
+    
+    .service-modal .modal-header {
+        padding: 15px 20px;
+    }
+    
+    .service-modal .modal-header h3 {
+        font-size: 1.5rem;
+    }
+    
+    .service-modal .modal-body {
+        padding: 20px;
+    }
+}
+
+/* Стили для модальных окон на мобильных устройствах */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .service-modal {
+        z-index: 9999 !important; /* Увеличиваем z-index для мобильных */
+    }
+    
+    .modal-close-btn {
+        font-size: 28px; /* Увеличиваем размер кнопки закрытия для лучшего таргетирования на мобильных */
+        padding: 10px;
+    }
+    
+    /* Улучшаем отображение кнопок в модальных окнах на мобильных */
+    .modal-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .modal-footer a {
+        width: 100% !important;
+        margin: 5px 0;
+        text-align: center;
+    }
+}
+
+/* Стили для социальных кнопок в модальных окнах услуг */
+.modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 15px;
+}
+
+.modal-footer .order-btn {
+    flex: 1;
+    min-width: 200px;
+    border-radius: 50px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border: none;
+    padding: 12px 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.modal-footer .order-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+}
+
+.modal-footer .whatsapp-btn {
+    background: linear-gradient(to right, #25D366, #128C7E);
+}
+
+.modal-footer .instagram-btn {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.modal-footer .order-btn i {
+    font-size: 18px;
+}
+
+@media (max-width: 576px) {
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .modal-footer .order-btn {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 10px 20px;
     }
 }

@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contactBtn.textContent = 'Позвонить';
         
         const whatsappBtn = document.createElement('a');
-        whatsappBtn.href = "https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+мероприятие&type=phone_number&app_absent=0";
+        whatsappBtn.href = "https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+организацию+мероприятия&type=phone_number&app_absent=0";
         whatsappBtn.target = "_blank";
         whatsappBtn.classList.add('btn', 'btn-secondary');
         whatsappBtn.style.backgroundColor = '#25D366';
@@ -658,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Создаем кнопку WhatsApp
         const whatsappButton = document.createElement('a');
-        whatsappButton.href = `https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+мероприятие+как+${encodeURIComponent(projectTitle)}&type=phone_number&app_absent=0`;
+        whatsappButton.href = `https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+организацию+мероприятия+как+${encodeURIComponent(projectTitle)}&type=phone_number&app_absent=0`;
         whatsappButton.target = '_blank';
         whatsappButton.className = 'order-btn whatsapp-btn';
         whatsappButton.style.backgroundColor = '#25D366';
@@ -719,6 +719,91 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     
+    // Инициализация обработчиков для модальных окон услуг
+    function initServicesModal() {
+        console.log('Инициализация карточек услуг...');
+        const serviceCards = document.querySelectorAll('.service-card[data-service-id]');
+        
+        console.log(`Найдено карточек услуг: ${serviceCards.length}`);
+        
+        if (!serviceCards.length) {
+            console.error('Не найдены карточки услуг');
+            return;
+        }
+        
+        // Добавляем обработчик клика для каждой карточки услуг
+        serviceCards.forEach(card => {
+            const serviceId = card.getAttribute('data-service-id');
+            console.log(`Добавление обработчика для карточки с ID: ${serviceId}`);
+            
+            // Удаляем старые обработчики, если они есть
+            const newCard = card.cloneNode(true);
+            card.parentNode.replaceChild(newCard, card);
+            
+            newCard.addEventListener('click', function() {
+                console.log(`Клик по карточке услуги с ID: ${serviceId}`);
+                const serviceModal = document.getElementById(`service-modal-${serviceId}`);
+                
+                if (!serviceModal) {
+                    console.error(`Не найдено модальное окно для услуги с ID ${serviceId}`);
+                    return;
+                }
+                
+                console.log(`Открываем модальное окно service-modal-${serviceId}`);
+                // Открываем модальное окно
+                serviceModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        // Обработчики для закрытия модальных окон
+        const closeButtons = document.querySelectorAll('.service-modal .modal-close-btn');
+        console.log(`Найдено кнопок закрытия: ${closeButtons.length}`);
+        
+        closeButtons.forEach(btn => {
+            // Удаляем старые обработчики
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', function() {
+                console.log('Клик по кнопке закрытия модального окна услуги');
+                const modal = this.closest('.service-modal');
+                if (modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+        
+        // Закрытие при клике вне контента модального окна
+        const modals = document.querySelectorAll('.service-modal');
+        console.log(`Найдено модальных окон услуг: ${modals.length}`);
+        
+        modals.forEach(modal => {
+            // Удаляем старые обработчики
+            const newModal = modal.cloneNode(true);
+            modal.parentNode.replaceChild(newModal, modal);
+            
+            newModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    console.log('Клик вне контента модального окна услуги');
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Повторно добавляем обработчики для кнопок в клонированном модальном окне
+            const closeBtn = newModal.querySelector('.modal-close-btn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    console.log('Клик по кнопке закрытия модального окна (повторно)');
+                    newModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+        });
+    }
+    
     // Инициализация
     initScrolledNav();
     initMobileMenu();
@@ -728,8 +813,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTestimonialModals();
     initPortfolio();
     setupModalClosing();
-    // initGalleryImageClickHandlers();
-    // preventGalleryImageDefaultBehavior(); // Закомментируйте эту строку
+    initServicesModal();
     
     // Исправляем пути к изображениям
     fixImagePaths();
@@ -1026,4 +1110,38 @@ function downloadFullscreenImage() {
         a.click();
         document.body.removeChild(a);
     }
-} 
+}
+
+// Повторная инициализация сервисных карточек после загрузки страницы
+window.addEventListener('load', function() {
+    console.log('Страница полностью загружена, повторная инициализация карточек услуг...');
+    
+    // Повторно инициализируем карточки услуг
+    setTimeout(function() {
+        initServicesModal();
+        
+        // Добавляем прямые обработчики для карточек услуг
+        document.querySelectorAll('.service-card[data-service-id]').forEach(card => {
+            const serviceId = card.getAttribute('data-service-id');
+            card.onclick = function(e) {
+                console.log(`Прямой обработчик: клик по карточке ${serviceId}`);
+                const modal = document.getElementById(`service-modal-${serviceId}`);
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+        });
+        
+        // Добавляем обработчики для кнопок закрытия
+        document.querySelectorAll('.service-modal .modal-close-btn').forEach(btn => {
+            btn.onclick = function(e) {
+                const modal = this.closest('.service-modal');
+                if (modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            };
+        });
+    }, 500);
+}); 
