@@ -12,6 +12,29 @@
     <link rel="icon" type="image/png" href="images/Logo_White.png">
     <link rel="shortcut icon" type="image/png" href="images/Logo_White.png">
     <link rel="apple-touch-icon" href="images/Logo_White.png">
+    <style>
+        @media (max-width: 767px) {
+            .cta-slogan {
+                font-size: 1.5rem !important;
+                line-height: 1.3 !important;
+                display: inline-block;
+            }
+            .cta-slogan:after {
+                content: '\A ваша гармония начинается с нас.';
+                white-space: pre;
+            }
+            .hide-on-mobile {
+                display: none !important;
+            }
+            .cta-buttons {
+                flex-direction: column !important;
+            }
+            .cta-buttons a {
+                width: 100% !important;
+                margin-bottom: 10px !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <script>
@@ -67,7 +90,7 @@
                         <li><a href="#services">Услуги</a></li>
                         <li><a href="#portfolio">Портфолио</a></li>
                         <li><a href="#testimonials">Отзывы</a></li>
-                        <li><a href="#contact" class="contact-btn">Оставить заявку</a></li>
+                        <li><a onClick="window.open('https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+организацию+мероприятия&type=phone_number&app_absent=0', '_blank')" class="contact-btn" style="cursor:pointer;">Оставить заявку</a></li>
                     </ul>
                     <div class="burger-menu">
                         <span></span>
@@ -97,7 +120,7 @@
                 ОРГАНИЗАЦИЯ СВАДЬБЫ ПОД КЛЮЧ
             </p>
             <div class="cover-buttons">
-                <a href="#contact" class="btn primary-btn">Оставить заявку</a>
+                <a onClick="window.open('https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+организацию+мероприятия&type=phone_number&app_absent=0', '_blank')" class="btn primary-btn" style="cursor:pointer;">Оставить заявку</a>
                 <a href="#about" class="btn secondary-btn">Узнать о нас больше</a>
             </div>
         </div>
@@ -154,7 +177,7 @@
                 <div class="service-card" data-service-id="2" style="cursor: pointer;" onclick="document.getElementById('service-modal-2').classList.add('active'); document.body.style.overflow = 'hidden';">
                     <i class="fas fa-music"></i>
                     <h3>Музыкальные группы</h3>
-                    <p>Широкий спектр репертуара, который охватит всё поколения ваших гостей.</p>
+                    <p>Широкий спектр репертуара, который охватит все поколения ваших гостей.</p>
                 </div>
                 <div class="service-card" data-service-id="3" style="cursor: pointer;" onclick="document.getElementById('service-modal-3').classList.add('active'); document.body.style.overflow = 'hidden';">
                     <i class="fas fa-heart"></i>
@@ -164,7 +187,7 @@
                 <div class="service-card" data-service-id="4" style="cursor: pointer;" onclick="document.getElementById('service-modal-4').classList.add('active'); document.body.style.overflow = 'hidden';">
                     <i class="fas fa-camera"></i>
                     <h3>Фотографы и видеографы</h3>
-                    <p>Запечатлим каждый момент вашего торжества.</p>
+                    <p>Качественно запечатлеем каждый момент вашего торжества</p>
                 </div>
                 <div class="service-card" data-service-id="5" style="cursor: pointer;" onclick="document.getElementById('service-modal-5').classList.add('active'); document.body.style.overflow = 'hidden';">
                     <svg viewBox="0 0 512 512" style="width: 60px; height: 60px; margin-bottom: 20px;">
@@ -189,7 +212,7 @@
                             c-4.32,0-8.472-1.272-11.998-3.63l-40.31,23.272L315.377,296.385z"/>
                     </svg>
                     <h3>Декор и флористика</h3>
-                    <p>Создадим атмосферу волшебства для вашего праздника.</p>
+                    <p>Создадим атмосферу волшебства для вашего праздника. Фотозона, президиум, рассадка для гостей, настольные композиции.</p>
                 </div>
                 <div class="service-card" data-service-id="6" style="cursor: pointer;" onclick="document.getElementById('service-modal-6').classList.add('active'); document.body.style.overflow = 'hidden';">
                     <i class="fas fa-cog"></i>
@@ -368,16 +391,20 @@
             
             <div class="cta-wrapper">
                 <div class="cta-text">
-                    <h3 class="cta-slogan">The Wedday — ваша гармония начинается с нас.</h3>
-                    <p class="cta-description">Расскажите нам о своей мечте, и мы воплотим её в реальность. 
-                       Наша команда профессионалов создаст незабываемое событие.</p>
+                    <h3 class="cta-slogan">The Wedday — <span class="hide-on-mobile">ваша гармония начинается с нас.</span></h3>
                     
                     <div class="cta-buttons" style="display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 20px; width: 100%; max-width: 100%;">
-                        <a href="tel:+77007172120" class="btn btn-primary" style="width: 48%;">
+                        <a href="tel:+77007172120" class="btn btn-primary" style="width: 48%; margin-bottom: 0;">
                             <i class="fas fa-phone"></i> Позвонить нам
                         </a>
-                        <a onClick="window.open('https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+организацию+мероприятия&type=phone_number&app_absent=0', '_blank')" target="_blank" class="btn btn-secondary" style="width: 48%; background-color: #25D366; display: flex; align-items: center; justify-content: center; cursor:pointer;">
+                        <a onClick="window.open('https://api.whatsapp.com/send/?phone=77007172120&text=Здравствуйте!+Хочу+заказать+организацию+мероприятия&type=phone_number&app_absent=0', '_blank')" target="_blank" class="btn btn-secondary" style="width: 48%; background-color: #25D366; display: flex; align-items: center; justify-content: center; cursor:pointer; margin-bottom: 0;">
                             <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Написать в WhatsApp
+                        </a>
+                    </div>
+                    
+                    <div class="cta-buttons" style="display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; width: 100%; max-width: 100%;">
+                        <a href="https://www.instagram.com/the_wedday?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="btn" style="width: 100%; background-color: #E1306C; display: flex; align-items: center; justify-content: center; cursor:pointer;">
+                            <i class="fab fa-instagram" style="margin-right: 8px;"></i> Перейти в Instagram
                         </a>
                     </div>
                     
@@ -396,19 +423,6 @@
                     <div class="cta-image-container">
                         <img src="images\projects\SEYDAZZIMOV-26_resized (1).jpg" alt="The Wedday Event" class="cta-image">
                         <div class="cta-image-overlay">
-                            <a href="https://www.instagram.com/the_wedday?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" style="text-decoration: none; color: #fff;">
-                                <div class="qr-code" style="position: relative;">
-                                    <img src="images/the_wedday_qr.png" alt="QR-код для Instagram" class="qr-image">
-                                    <p style="margin: 15px 0 5px; font-size: 16px; font-weight: 600;">
-                                        <i class="fab fa-instagram" style="color: #E1306C; font-size: 18px;"></i> 
-                                        Сканируйте QR-код для перехода в Instagram
-                                    </p>
-                                    <p style="margin: 5px 0; font-size: 14px; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-external-link-alt" style="margin-right: 5px; color: #D4AF37;"></i> 
-                                        Нажмите для перехода
-                                    </p>
-                                </div>
-                            </a>
                         </div>
                     </form>
                 </div>

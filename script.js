@@ -1110,7 +1110,7 @@ function downloadFullscreenImage() {
         a.click();
         document.body.removeChild(a);
     }
-}
+} 
 
 // Повторная инициализация сервисных карточек после загрузки страницы
 window.addEventListener('load', function() {
